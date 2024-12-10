@@ -29,7 +29,7 @@ export AZURE_DB_NAME='development'
 export AZURE_DB_HOST='c2084413.mysql.database.azure.com'
 export AZURE_DB_PORT='3306'
 export AZURE_DB_USER='c2084413'
-export AZURE_DB_PASSWORD='your-password'
+export AZURE_DB_PASSWORD='Aleena1234'
 export AZURE_SA_NAME="dangobase2"
 export AZURE_SA_KEY="z5fbEKbc3OAKjf1oBrDqEf0hsCEfWHMjBCCXwXkUmd/WK33Q+XRPzffCQ9+UQT9xwAsN/YvMEbfU+AStUIvjCA== " 
 
