@@ -1,88 +1,73 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from .models import Issue
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic.edit import DeleteView 
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Module
+from .forms import RegistrationForm
+import requests
 
-
-# Create your views here.
 def home(request):
-    return render(request, 'itreporting/home.html')
+    url = 'https://api.openweathermap.org/data/2.5/weather?q={},{}&units=metric&appid={}'
+    cities = [('Sheffield', 'UK'), ('Melaka', 'Malaysia'), ('Bandung', 'Indonesia')]
+    weather_data = []
+    api_key = '183f9de509264efdae89f36f19fb28bc'
 
+    for city in cities:
+        city_weather = requests.get(url.format(city[0], city[1], api_key)).json()
+        weather = {
+            'city': city_weather['name'] + ', ' + city_weather['sys']['country'],
+            'temperature': city_weather['main']['temp'],
+            'description': city_weather['weather'][0]['description']
+        }
+        weather_data.append(weather)
 
-# Function-based view for About
+    return render(request, 'itreporting/home.html', {'title': 'Homepage', 'weather_data': weather_data})
+
 def about(request):
     return render(request, 'itreporting/about.html')
 
-
-# Function-based view for Contact
 def contact(request):
     return render(request, 'itreporting/contact.html')
 
+def register_for_course(request):
+    if request.method == "POST":
+        form = RegistrationForm(request.POST, user=request.user)
+        if form.is_valid():
+            registration = form.save(commit=False)
+            registration.student = request.user
+            registration.save()
+            messages.success(request, "You have successfully registered for the course!")
+            return redirect('itreporting:module-list')
+    else:
+        form = RegistrationForm(user=request.user)
 
-# Function-based view for Report
-def report(request):
-    daily_report = {'issues': Issue.objects.all(), 'title': 'Issues Reported'}
-    return render(request, 'itreporting/report.html', daily_report)
+    return render(request, 'itreporting/registration_form.html', {'form': form})
 
+class ModuleListView(ListView):
+    model = Module
+    ordering = ['-date_added']
+    template_name = 'itreporting/module_list.html'
+    context_object_name = 'modules'
+    paginate_by = 10
 
-class PostListView(ListView):
-    model = Issue
-    ordering = ['-date_submitted']
-    template_name = 'itreporting/report.html'
-    context_object_name = 'issues'
-    paginate_by = 10  # Optional pagination
+class ModuleDetailView(DetailView):
+    model = Module
+    template_name = 'itreporting/module_detail.html'
 
-
-class PostDetailView(DetailView):
-    model = Issue
-    template_name = 'itreporting/issue_detail.html'
-
-
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Issue
-    fields = ['type', 'room', 'urgent', 'details']
+class ModuleCreateView(LoginRequiredMixin, CreateView):
+    model = Module
+    fields = ['name', 'description', 'instructor']
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.instructor = self.request.user
         return super().form_valid(form)
 
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Issue
-    success_url = '/report'
-
-    def test_func(self):
-        issue = self.get_object()
-        return self.request.user == issue.author
-    
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Issue
-    success_url = '/report'
+class ModuleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Module
+    success_url = reverse_lazy('module-list')
 
     def test_func(self):
-        issue = self.get_object()
-        return self.request.user == issue.author
-    
+        module = self.get_object()
+        return self.request.user == module.instructor
 
-class PostListView(ListView):
-    model = Issue
-    ordering = ['-date_submitted']
-    template_name = 'itreporting/report.html'
-    context_object_name = 'issues'
-    paginate_by = 5  # Optional pagination
-    
-
-
-    
-
-
-
-    
-    

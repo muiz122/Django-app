@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv() 
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,14 +25,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'hr5634')
-WEBSITE_HOSTNAME = os.environ.get('WEBSITE_HOSTNAME', None)
+SECRET_KEY = os.getenv('SECRET_KEY', 'hr5634')
+WEBSITE_HOSTNAME = os.getenv('WEBSITE_HOSTNAME', None)
 DEBUG = WEBSITE_HOSTNAME == None
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+if DEBUG:
+  ALLOWED_HOSTS = []
+else:
+  ALLOWED_HOSTS = [WEBSITE_HOSTNAME]
+  CSRF_TRUSTED_ORIGINS = [f'https://{WEBSITE_HOSTNAME}'] 
+
 
 
 # Application definition
@@ -133,8 +144,8 @@ USE_TZ = True
 # MEDIA_ROOT = BASE_DIR / 'media'
 # MEDIA_URL = '/media/'
 
-AZURE_SA_NAME = os.environ['AZURE_SA_NAME']
-AZURE_SA_KEY = os.environ['AZURE_SA_KEY']
+AZURE_SA_NAME = os.getenv('AZURE_SA_NAME')
+AZURE_SA_KEY = os.getenv('AZURE_SA_KEY')
 
 STORAGES = {
     "default": {
@@ -154,6 +165,18 @@ STORAGES = {
         },
     },
 }
+
+
+STATIC_URL = "static/"
+STATIC_ROOT =  BASE_DIR / 'itreporting'/ "static"
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'staticfiles'
+    
+]
+
+
+
 
 STATIC_URL = f'https://{AZURE_SA_NAME}.blob.core.windows.net/static/'
 MEDIA_URL = f'https://{AZURE_SA_NAME}.blob.core.windows.net/media/'

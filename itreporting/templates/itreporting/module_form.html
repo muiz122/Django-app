@@ -1,0 +1,26 @@
+{% extends "itreporting/base.html" %}
+
+{% block content %}
+<div class="content-section">
+    <form method="POST" class="form">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">
+                {% if object %}Edit Module{% else %}Create Module{% endif %}
+            </legend>
+            {{ form.as_p }}
+        </fieldset>
+        
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-info">
+                {% if object %}Update Module{% else %}Create Module{% endif %}
+            </button>
+        </div>
+    </form>
+    <div class="border-top pt-3">
+        <a class="btn btn-secondary" href="{% url 'itreporting:module-list' %}">Back to Modules</a>
+    </div>
+</div>
+{% endblock content %}
+
+
