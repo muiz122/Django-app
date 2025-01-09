@@ -4,7 +4,7 @@
 <div class="container">
     <h1>{{ object.name }}</h1>
     <p>{{ object.description }}</p>
-    <p>Instructor: {{ object.instructor.username }}</p>
+    <p>Course Leader: {{ object.instructor.username }}</p>
     <p>Date Added: {{ object.date_added }}</p>
 
     <h3>Courses in this Module:</h3>
@@ -12,15 +12,15 @@
         {% for course in object.courses.all %}
         <li class="list-group-item">{{ course.name }} - {{ course.description }}</li>
         {% empty %}
-        <p>No courses available in this module.</p>
+        <p>Sorry, No courses available in this module.</p>
         {% endfor %}
     </ul>
 
     {% if request.user == object.instructor %}
-    <a href="{% url 'itreporting:module-update' object.pk %}" class="btn btn-warning">Edit Module</a>
+    <a href="{% url 'itreporting:module-update' object.pk %}" class="btn btn-warning">Edit This Module</a>
     <form action="{% url 'itreporting:module-delete' object.pk %}" method="POST" class="d-inline">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Delete Module</button>
+        <button type="submit" class="btn btn-danger">Delete This Module</button>
     </form>
     {% endif %}
 </div>

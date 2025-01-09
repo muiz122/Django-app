@@ -22,8 +22,8 @@
     <article class="media content-section">
       <div class="media-body">
         <div class="article-metadata">
-          <a class="mr-2" href="#">{{ module.instructor.profile }}</a>
-          <small class="text-muted">{{ module.date_added }}</small>
+          <a class="mr-2" href="#">{{ module.name }}</a>
+          <small class="text-muted">{{ module.description }}</small>
         </div>
         <h2><a class="article-title" href="{% url 'itreporting:module-detail' module.id %}">{{ module.name }}</a></h2>
         <p class="article-content">{{ module.description }}</p>

@@ -47,7 +47,12 @@ def register_for_course(request):
 def module_list(request):
     modules = Module.objects.all()
     context ={'modules': modules}
-    return render(request, 'itreporting/module_list.html')
+    return render(request, 'itreporting/module_list.html') 
+
+
+
+def profile(request):
+    return render(request, 'users/profile.html')
   
 
 
@@ -57,6 +62,8 @@ class ModuleListView(ListView):
     template_name = 'itreporting/module_list.html'
     context_object_name = 'module'
     paginate_by = 10
+    
+
 
 class ModuleDetailView(DetailView):
     model = Module

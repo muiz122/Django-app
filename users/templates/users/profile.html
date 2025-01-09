@@ -1,5 +1,6 @@
-{% load crispy_forms_tags %}
 {% extends "itreporting/base.html" %}
+
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="content-section">
@@ -21,7 +22,7 @@
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <fieldset class="form-group">
-      <legend class="border-bottom mb-4">Student IT Services - Profile Details</legend>
+      <legend class="border-bottom mb-4">Student Profiles </legend>
       {{ u_form | crispy }}
       {{ p_form | crispy }}
     </fieldset>
